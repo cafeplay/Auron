@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
-/* ========== فونت Space Grotesk از Google Fonts (برای کل سایت) ========== */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ========== فونت Space Grotesk از Google Fonts با Import صحیح ========== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-* {
-  font-family: 'Space Grotesk', var(--font-vazirmatn), system-ui, sans-serif;
+/* اعمال فونت به کل سایت */
+html, body, * {
+  font-family: 'Space Grotesk', 'Vazirmatn', system-ui, sans-serif !important;
 }
 
 @theme {
