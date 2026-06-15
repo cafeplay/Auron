@@ -1,0 +1,149 @@
+name: Create Project Structure
+
+on:
+  workflow_dispatch:  # اجرای دستی
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/create-structure.yml'
+
+jobs:
+  create-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create directory structure
+        run: |
+          mkdir -p src/app
+          mkdir -p src/components
+          mkdir -p src/config
+          mkdir -p src/hooks
+          mkdir -p src/lib
+          mkdir -p public
+          
+      - name: Create all files with content
+        run: |
+          # 1. app/layout.tsx
+          cat > src/app/layout.tsx << 'EOF'
+          import type { Metadata } from 'next'
+          import { Vazirmatn } from 'next/font/google'
+          import './globals.css'
+          import { BackgroundEffects } from '@/components/BackgroundEffects'
+
+          const vazirmatn = Vazirmatn({
+            subsets: ['arabic', 'latin'],
+            variable: '--font-vazirmatn',
+          })
+
+          export const metadata: Metadata = {
+            title: 'AURON',
+            description: 'Intelligent Systems',
+          }
+
+          export default function RootLayout({ children }: { children: React.ReactNode }) {
+            return (
+              <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+                <body className="bg-background text-white">
+                  <BackgroundEffects />
+                  {children}
+                </body>
+              </html>
+            )
+          }
+          EOF
+          
+          # 2. app/page.tsx
+          cat > src/app/page.tsx << 'EOF'
+          'use client'
+          import { Hero } from '@/components/Hero'
+          import { Philosophy } from '@/components/Philosophy'
+          import { BrandStatement } from '@/components/BrandStatement'
+          import { ProductSection } from '@/components/ProductSection'
+          import { Footer } from '@/components/Footer'
+
+          export default function Home() {
+            return (
+              <main>
+                <Hero />
+                <Philosophy />
+                <BrandStatement />
+                <ProductSection />
+                <Footer />
+              </main>
+            )
+          }
+          EOF
+          
+          # 3. globals.css
+          cat > src/app/globals.css << 'EOF'
+          @import "tailwindcss";
+          
+          @theme {
+            --color-background: #0A0A0F;
+            --color-primary: #9CB080;
+          }
+          
+          body {
+            background-color: var(--color-background);
+            font-family: var(--font-vazirmatn), system-ui;
+          }
+          EOF
+          
+          # 4. components/Hero.tsx (ساده شده)
+          cat > src/components/Hero.tsx << 'EOF'
+          'use client'
+          import { motion } from 'framer-motion'
+          
+          export function Hero() {
+            return (
+              <section className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <motion.h1 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-8xl font-bold"
+                  >
+                    آئوران
+                  </motion.h1>
+                  <p className="text-xl text-gray-400 mt-4">
+                    سیستم‌های هوشمند برای دنیای متصل
+                  </p>
+                </div>
+              </section>
+            )
+          }
+          EOF
+          
+          # 5. سایر فایل‌های کامپوننت (خلاصه - ادامه دارد)
+          echo "placeholder" > src/components/Philosophy.tsx
+          echo "placeholder" > src/components/BrandStatement.tsx
+          echo "placeholder" src/components/ProductSection.tsx
+          echo "placeholder" > src/components/Footer.tsx
+          echo "placeholder" > src/components/BackgroundEffects.tsx
+          echo "placeholder" > src/components/Logo.tsx
+          echo "placeholder" > src/components/Container.tsx
+          echo "placeholder" > src/components/MotionWrapper.tsx
+          
+          # 6. config files
+          echo "export const content = {}" > src/config/content.ts
+          echo "export const theme = {}" > src/config/theme.ts
+          echo "export const typography = {}" > src/config/typography.ts
+          echo "export const branding = { name: 'AURON' }" > src/config/branding.ts
+          echo "export const products = []" > src/config/products.ts
+          
+          # 7. hooks & lib
+          echo "export const useScrollReveal = () => {}" > src/hooks/useScrollReveal.ts
+          echo "export const animations = {}" > src/lib/animations.ts
+          
+          # 8. public files (placeholder)
+          echo '<svg></svg>' > public/logo.svg
+          touch public/favicon.ico
+          
+      - name: Commit and push if changes
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add src/ public/
+          git diff --cached --quiet || git commit -m "chore: auto-create project structure"
+          git push
