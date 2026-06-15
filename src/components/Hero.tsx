@@ -21,9 +21,10 @@ export function Hero() {
             <Logo />
           </motion.div>
 
+          {/* فقط این خط تغییر کرده - کلاس auron-title اضافه شده */}
           <motion.h1
             variants={fadeInUp}
-            className="text-7xl sm:text-8xl md:text-9xl font-black tracking-tighter mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent"
+            className="auron-title text-7xl sm:text-8xl md:text-9xl font-black tracking-tighter mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent"
           >
             {branding.name}
           </motion.h1>
