@@ -1,13 +1,76 @@
 @import "tailwindcss";
 
-/* ========== فونت Space Grotesk از Google Fonts ========== */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ========== فونت محلی Space Grotesk برای متون انگلیسی ========== */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
 
-/* کلاس اختصاصی فقط برای کلمه AURON */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========== اعمال فونت Space Grotesk فقط برای کاراکترهای انگلیسی ========== */
+@layer base {
+  /* اعداد و حروف انگلیسی */
+  .english-text,
+  [lang="en"],
+  .latin-text {
+    font-family: 'Space Grotesk', 'Vazirmatn', system-ui, sans-serif;
+  }
+  
+  /* تگ‌های خاص که ممکن است شامل متن انگلیسی باشند */
+  code, pre, .code, .numeric {
+    font-family: 'Space Grotesk', monospace;
+  }
+}
+
+/* کلاس اختصاصی برای کلمه AURON (که انگلیسی است) */
 .auron-title {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+/* اعداد در هر جای سایت */
+.number, .digit, .stat-value {
+  font-family: 'Space Grotesk', 'Vazirmatn', sans-serif;
+}
+
+/* لاتین توی دکمه‌ها */
+.btn-latin {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 @theme {
