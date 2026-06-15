@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
-/* ========== اضافه شدن فونت محلی Sora ========== */
-@font-face {
-  font-family: 'Sora';
-  src: url('/fonts/sora.otf') format('opentype');
-  font-weight: 400 800;
-  font-style: normal;
-  font-display: swap;
+/* اضافه کردن فونت Space Grotesk از Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* کلاس اختصاصی فقط برای کلمه AURON */
+.auron-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
 }
 /* ============================================ */
 
