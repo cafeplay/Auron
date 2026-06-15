@@ -51,29 +51,29 @@ export function BackgroundEffects() {
       />
 
       {/* Floating particles */}
-      <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-[2px] h-[2px] bg-white/10 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-            }}
-            animate={{
-              y: [null, -30, 30, -30],
-              x: [null, 20, -20, 20],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: 20 + Math.random() * 15,
-              repeat: Infinity,
-              ease: 'linear',
-              delay: Math.random() * 10,
-            }}
-          />
-        ))}
-      </div>
+<div className="absolute inset-0">
+  {[...Array(15)].map((_, i) => (
+    <motion.div
+      key={i}
+      className="absolute w-[2px] h-[2px] bg-white/10 rounded-full"
+      style={{
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+      }}
+      animate={{
+        y: [-30, 30, -30],
+        x: [20, -20, 20],
+        opacity: [0, 0.5, 0],
+      }}
+      transition={{
+        duration: 20 + Math.random() * 15,
+        repeat: Infinity,
+        ease: 'linear',
+        delay: Math.random() * 10,
+      }}
+    />
+  ))}
+</div>
     </div>
   )
 }
