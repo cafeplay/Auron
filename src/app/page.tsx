@@ -1,19 +1,16 @@
-'use client'
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
 
-import { Hero } from '@/components/Hero'
-import { Philosophy } from '@/components/Philosophy'
-import { BrandStatement } from '@/components/BrandStatement'
-import { ProductSection } from '@/components/ProductSection'
-import { Footer } from '@/components/Footer'
+export default async function TestPage() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
 
-export default function Home() {
   return (
-    <main className="relative">
-      <Hero />
-      <Philosophy />
-      <BrandStatement />
-      <ProductSection />
-      <Footer />
-    </main>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-gray-900 p-8 rounded-2xl text-center">
+        <h1 className="text-2xl font-bold text-white">✅ اتصال به Supabase</h1>
+        <p className="text-green-400 mt-4">در حال بررسی...</p>
+      </div>
+    </div>
   )
 }
