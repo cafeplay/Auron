@@ -1,8 +1,8 @@
 export const branding = {
-  name: 'AURON',
+  name: 'آئوران',
   namePersian: 'آئوران',
   tagline: 'سیستم‌های هوشمند برای دنیای متصل',
   description: 'فناوری زمانی ارزشمند است که نامرئی باشد.',
-  siteTitle: 'آئوران | سیستم‌های هوشمند',
+  siteTitle: 'AURAN | سیستم‌های هوشمند',
   logoPath: '/logo.svg',
 } as const
