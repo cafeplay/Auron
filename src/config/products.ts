@@ -14,7 +14,7 @@ export const products: Product[] = [
     name: 'کشت‌یار',
     nameEn: '',  // ← خالی شد (انگلیسی حذف شد)
     description: 'سامانه هوشمند پایش و مدیریت مزرعه',
-    link: 'keshtyar.pythonanywhere.com/login',
+    link: 'https://keshtyar.pythonanywhere.com/login',
     cta: 'مشاهده محصول',
   },
 ]
