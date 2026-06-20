@@ -10,7 +10,7 @@ const researchItems = [
     title: 'پرسونای مشتری',
     description: 'تحلیل و شناسایی نیازها، رفتارها و انتظارات کاربران بالقوه کشت‌یار',
     icon: '📊',
-    href: '/persona',
+    href: '/research/persona',
     status: 'active',
   },
   {
@@ -18,7 +18,7 @@ const researchItems = [
     title: 'مدیریت پرسشنامه',
     description: 'مشاهده و تحلیل پاسخ‌های ثبت‌شده از کاربران',
     icon: '📋',
-    href: '/admin/persona',
+    href: '/research/admin/persona',
     status: 'active',
   },
   {
