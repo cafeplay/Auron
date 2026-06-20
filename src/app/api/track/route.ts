@@ -6,11 +6,11 @@ export async function GET(request: NextRequest) {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent') || '';
   
-  // دریافت IP از هدرها
+  // دریافت IP از هدرها (بدون استفاده از request.ip)
   const forwardedFor = headersList.get('x-forwarded-for');
   const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : '';
   
-  // دریافت اطلاعات موقعیت از هدرها (در Vercel)
+  // دریافت اطلاعات موقعیت از هدرهای Vercel
   const geo = {
     country: headersList.get('x-vercel-ip-country') || '',
     city: headersList.get('x-vercel-ip-city') || '',
