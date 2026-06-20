@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Vazirmatn } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Tracker } from '@/components/Tracker'
 
 import './globals.css'
 import { BackgroundEffects } from '@/components/BackgroundEffects'
@@ -25,11 +26,10 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" className={vazirmatn.variable}>
       <body className="bg-background text-white">
         <BackgroundEffects />
-
         {children}
-
         <Analytics />
         <SpeedInsights />
+        <Tracker />
       </body>
     </html>
   )
