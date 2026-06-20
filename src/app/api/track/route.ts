@@ -5,21 +5,26 @@ import UAParser from 'ua-parser-js';
 export async function GET(request: NextRequest) {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent') || '';
-  const ip = request.ip || headersList.get('x-forwarded-for') || '';
-  const geo = request.geo || {};
+  
+  // دریافت IP از هدرها
+  const forwardedFor = headersList.get('x-forwarded-for');
+  const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : '';
+  
+  // دریافت اطلاعات موقعیت از هدرها (در Vercel)
+  const geo = {
+    country: headersList.get('x-vercel-ip-country') || '',
+    city: headersList.get('x-vercel-ip-city') || '',
+    region: headersList.get('x-vercel-ip-country-region') || '',
+    latitude: headersList.get('x-vercel-ip-latitude') || '',
+    longitude: headersList.get('x-vercel-ip-longitude') || '',
+  };
 
   const parser = new UAParser(userAgent);
   const result = parser.getResult();
 
   return NextResponse.json({
     ip,
-    geo: {
-      country: geo.country || '',
-      city: geo.city || '',
-      region: geo.region || '',
-      latitude: geo.latitude || '',
-      longitude: geo.longitude || '',
-    },
+    geo,
     device: {
       type: result.device.type || 'desktop',
       model: result.device.model || '',
