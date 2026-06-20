@@ -1,109 +1,467 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '@/components/Container';
 
-const stats = [
-  { value: '۷۰٪', label: 'علاقه‌مند به فناوری‌های هوشمند' },
-  { value: '۶۵٪', label: 'نیازمند پایش بهتر محیط' },
-  { value: '۸۰٪', label: 'معتقد به مفید بودن سامانه‌های هوشمند' },
-  { value: '۶۰٪', label: 'تمایل به استفاده از کشت‌یار' },
+// ==================== تایپ‌ها ====================
+type Answer = string | number | string[];
+
+interface Question {
+  id: number;
+  text: string;
+  type: 'single' | 'multi' | 'text' | 'number' | 'range';
+  options?: string[];
+}
+
+interface PersonaResult {
+  name: string;
+  age: string;
+  job: string;
+  activity: string;
+  techLevel: string;
+  goals: string[];
+  challenges: string[];
+  needs: string[];
+  motivations: string[];
+  workBehavior: string;
+  techAdoption: string;
+  quote: string;
+}
+
+// ==================== سوالات ====================
+const questions: Question[] = [
+  {
+    id: 1,
+    text: 'سن شما در کدام بازه قرار دارد؟',
+    type: 'single',
+    options: ['زیر 25 سال', '25 تا 35 سال', '35 تا 45 سال', '45 تا 55 سال', 'بالای 55 سال'],
+  },
+  {
+    id: 2,
+    text: 'شغل شما چیست؟',
+    type: 'text',
+  },
+  {
+    id: 3,
+    text: 'آیا مالک مزرعه هستید؟',
+    type: 'single',
+    options: ['بله', 'خیر', 'مدیر یا ناظر مزرعه'],
+  },
+  {
+    id: 4,
+    text: 'وسعت زمین یا مزرعه شما چقدر است؟',
+    type: 'single',
+    options: ['کمتر از 1 هکتار', '1 تا 5 هکتار', '5 تا 20 هکتار', 'بیش از 20 هکتار'],
+  },
+  {
+    id: 5,
+    text: 'مهم‌ترین محصول یا فعالیت شما چیست؟',
+    type: 'single',
+    options: ['زراعت', 'باغداری', 'گلخانه', 'دامداری', 'سایر'],
+  },
+  {
+    id: 6,
+    text: 'در حال حاضر وضعیت مزرعه را چگونه پایش می‌کنید؟',
+    type: 'single',
+    options: ['مراجعه حضوری', 'تماس با کارگران', 'سنسورها و تجهیزات دیجیتال', 'روش‌های دیگر'],
+  },
+  {
+    id: 7,
+    text: 'بزرگ‌ترین مشکل شما در مدیریت مزرعه چیست؟',
+    type: 'text',
+  },
+  {
+    id: 8,
+    text: 'چند بار در هفته به مزرعه سر می‌زنید؟',
+    type: 'text',
+  },
+  {
+    id: 9,
+    text: 'آیا تاکنون از سنسورها یا تجهیزات هوشمند استفاده کرده‌اید؟',
+    type: 'single',
+    options: ['بله', 'خیر'],
+  },
+  {
+    id: 10,
+    text: 'چقدر به کنترل تجهیزات از راه دور علاقه دارید؟ (از 1 تا 5)',
+    type: 'range',
+  },
+  {
+    id: 11,
+    text: 'چقدر به مشاهده داده‌های لحظه‌ای مزرعه علاقه دارید؟ (از 1 تا 5)',
+    type: 'range',
+  },
+  {
+    id: 12,
+    text: 'مهم‌ترین اطلاعاتی که دوست دارید مشاهده کنید چیست؟',
+    type: 'multi',
+    options: ['رطوبت خاک', 'دما', 'وضعیت آبیاری', 'مصرف آب', 'وضعیت تجهیزات', 'سایر'],
+  },
+  {
+    id: 13,
+    text: 'اگر سامانه‌ای بتواند زمان و هزینه مدیریت مزرعه را کاهش دهد، چقدر احتمال دارد از آن استفاده کنید؟ (از 1 تا 5)',
+    type: 'range',
+  },
+  {
+    id: 14,
+    text: 'مهم‌ترین عامل در انتخاب چنین سامانه‌ای چیست؟',
+    type: 'single',
+    options: ['قیمت', 'سادگی استفاده', 'قابلیت اطمینان', 'امکانات', 'پشتیبانی'],
+  },
+  {
+    id: 15,
+    text: 'اگر بخواهید یک قابلیت به کشت‌یار اضافه شود، آن قابلیت چیست؟',
+    type: 'text',
+  },
 ];
 
-const persona = {
-  name: 'علی رضایی',
-  age: '۳۲ سال',
-  job: 'کارمند',
-  location: 'شهرستان',
-  property: 'باغ خانوادگی و باغچه خانگی',
-  goals: ['صرفه‌جویی در زمان', 'مدیریت بهتر آبیاری', 'اطلاع از وضعیت باغ'],
-  challenges: ['حضور نداشتن دائمی در محل', 'هدررفت آب', 'فراموشی زمان آبیاری'],
-  needs: ['مشاهده وضعیت از راه دور', 'هشدارهای هوشمند', 'تاریخچه اطلاعات'],
-};
+// ==================== تحلیل پاسخ‌ها ====================
+function analyzeAnswers(answers: Record<number, Answer>): PersonaResult {
+  const age = answers[1] as string || 'نامشخص';
+  const job = answers[2] as string || 'نامشخص';
+  const ownership = answers[3] as string || '';
+  const landSize = answers[4] as string || '';
+  const activity = answers[5] as string || '';
+  const currentMethod = answers[6] as string || '';
+  const mainProblem = answers[7] as string || '';
+  const visitCount = answers[8] as string || '';
+  const usedSmart = answers[9] as string || 'خیر';
+  const remoteControl = Number(answers[10]) || 0;
+  const realtimeData = Number(answers[11]) || 0;
+  const importantInfo = answers[12] as string[] || [];
+  const adoptionLikelihood = Number(answers[13]) || 0;
+  const importantFactor = answers[14] as string || '';
+  const extraFeature = answers[15] as string || '';
 
+  // تعیین سطح فناوری
+  let techLevel = 'پایین';
+  if (usedSmart === 'بله' || remoteControl >= 4 || realtimeData >= 4) {
+    techLevel = 'بالا';
+  } else if (remoteControl >= 3 || realtimeData >= 3 || currentMethod.includes('سنسور')) {
+    techLevel = 'متوسط';
+  }
+
+  // تعیین میزان پذیرش فناوری
+  let techAdoption = 'پایین';
+  if (adoptionLikelihood >= 4 || remoteControl >= 4 || realtimeData >= 4) {
+    techAdoption = 'بالا';
+  } else if (adoptionLikelihood >= 3) {
+    techAdoption = 'متوسط';
+  }
+
+  // اهداف بر اساس پاسخ‌ها
+  const goals: string[] = [];
+  if (landSize.includes('بیش از') || landSize.includes('5 تا')) goals.push('مدیریت بهتر مزرعه بزرگ');
+  if (importantInfo.includes('رطوبت خاک') || importantInfo.includes('وضعیت آبیاری')) goals.push('بهبود مدیریت آبیاری');
+  if (realtimeData >= 4) goals.push('دسترسی به داده‌های لحظه‌ای');
+  if (remoteControl >= 4) goals.push('کنترل تجهیزات از راه دور');
+  if (adoptionLikelihood >= 4) goals.push('کاهش هزینه و زمان مدیریت');
+  if (goals.length === 0) goals.push('بهبود کلی مدیریت مزرعه');
+
+  // چالش‌ها
+  const challenges: string[] = [];
+  if (mainProblem) challenges.push(mainProblem);
+  if (ownership === 'خیر') challenges.push('نبود مالکیت مستقیم بر مزرعه');
+  if (visitCount && Number(visitCount) < 3) challenges.push('سر زدن محدود به مزرعه');
+  if (currentMethod === 'مراجعه حضوری') challenges.push('نیاز به حضور فیزیکی');
+  if (landSize.includes('بیش از')) challenges.push('وسعت زیاد مزرعه');
+  if (challenges.length === 0) challenges.push('نیاز به بهبود فرآیندهای مدیریتی');
+
+  // نیازها
+  const needs: string[] = [];
+  if (realtimeData >= 4) needs.push('پایش لحظه‌ای');
+  if (remoteControl >= 4) needs.push('کنترل از راه دور');
+  if (importantInfo.includes('رطوبت خاک')) needs.push('اطلاع از رطوبت خاک');
+  if (importantInfo.includes('وضعیت آبیاری')) needs.push('مدیریت هوشمند آبیاری');
+  if (importantInfo.includes('مصرف آب')) needs.push('مدیریت مصرف آب');
+  if (needs.length === 0) needs.push('دسترسی به اطلاعات دقیق مزرعه');
+
+  // انگیزه‌ها
+  const motivations: string[] = [];
+  if (adoptionLikelihood >= 4) motivations.push('کاهش هزینه‌ها');
+  if (remoteControl >= 4) motivations.push('راحتی و صرفه‌جویی در زمان');
+  if (realtimeData >= 4) motivations.push('اطلاعات دقیق و به‌روز');
+  if (importantFactor === 'قابلیت اطمینان') motivations.push('اطمینان از عملکرد سیستم');
+  if (importantFactor === 'سادگی استفاده') motivations.push('استفاده آسان');
+  if (motivations.length === 0) motivations.push('بهبود کارایی مزرعه');
+
+  // نام فرضی
+  let name = 'علی رضایی';
+  if (ownership === 'مدیر یا ناظر مزرعه') name = 'رضا کریمی';
+  else if (activity === 'گلخانه') name = 'محمد حسینی';
+  else if (activity === 'دامداری') name = 'حسین محمدی';
+  else if (landSize.includes('بیش از')) name = 'عباس احمدی';
+
+  // نقل قول
+  const quotes = [
+    'دوست دارم همه چیز رو از راه دور کنترل کنم و دیگه نگران نباشم.',
+    'وقت و هزینه زیادی صرف سرکشی به مزرعه می‌کنم، باید راهی پیدا کنم.',
+    'اگر سیستمی باشه که بتونه به من کمک کنه، حتماً استفاده می‌کنم.',
+    'می‌خوام بدونم چه خبره توی مزرعه، بدون اینکه برم اونجا.',
+    'فناوری می‌تونه زندگی رو برای کشاورزها راحت‌تر کنه.',
+  ];
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  return {
+    name,
+    age,
+    job,
+    activity: activity || 'کشاورزی',
+    techLevel,
+    goals,
+    challenges,
+    needs,
+    motivations,
+    workBehavior: currentMethod || 'مراجعه حضوری و بررسی مستقیم',
+    techAdoption,
+    quote,
+  };
+}
+
+// ==================== کامپوننت اصلی ====================
 export default function PersonaPage() {
-  return (
-    <main className="min-h-screen bg-background pt-24 pb-16">
-      <Container>
-        {/* عنوان */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-            پرسونای مشتری کشت‌یار
-          </h1>
-          <p className="text-lg md:text-xl text-text-tertiary max-w-2xl mx-auto">
-            تحلیل مشتریان بالقوه سامانه هوشمند پایش و مدیریت باغ و باغچه
-          </p>
-        </motion.div>
+  const [step, setStep] = useState<'questions' | 'result'>('questions');
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, Answer>>({});
+  const [persona, setPersona] = useState<PersonaResult | null>(null);
 
-        {/* بخش ۱ - معرفی */}
-        <section className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">معرفی پروژه</h2>
-          <p className="text-text-secondary text-base md:text-lg leading-relaxed max-w-3xl mx-auto text-center">
-            این پروژه با هدف شناسایی نیازها، رفتارها و انتظارات کاربران بالقوه سامانه کشت‌یار انجام شده است.
-            اطلاعات این صفحه بر اساس پرسشنامه و تحلیل پاسخ‌های شرکت‌کنندگان تهیه شده‌اند.
-          </p>
-        </section>
+  const handleAnswer = (value: Answer) => {
+    const q = questions[currentQuestion];
+    const newAnswers = { ...answers, [q.id]: value };
+    setAnswers(newAnswers);
 
-        {/* بخش ۲ - آمار */}
-        <section className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">خلاصه پرسشنامه</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-surface border border-border rounded-2xl p-6 text-center shadow-[8px_8px_16px_rgba(0,0,0,0.3),-4px_-4px_8px_rgba(255,255,255,0.02)]"
-              >
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
-                  {stat.value}
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // تحلیل و نمایش نتیجه
+      const result = analyzeAnswers(newAnswers);
+      setPersona(result);
+      setStep('result');
+    }
+  };
+
+  const handleSingleChoice = (option: string) => {
+    if (questions[currentQuestion].type === 'single') {
+      handleAnswer(option);
+    } else if (questions[currentQuestion].type === 'multi') {
+      const current = (answers[questions[currentQuestion].id] as string[]) || [];
+      if (current.includes(option)) {
+        handleAnswer(current.filter((i: string) => i !== option));
+      } else {
+        handleAnswer([...current, option]);
+      }
+    }
+  };
+
+  const handleTextSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const input = (e.target as HTMLFormElement).querySelector('input, textarea') as HTMLInputElement | HTMLTextAreaElement;
+    if (input?.value.trim()) {
+      handleAnswer(input.value.trim());
+    }
+  };
+
+  const handleRangeSubmit = (value: number) => {
+    handleAnswer(value);
+  };
+
+  const resetQuiz = () => {
+    setStep('questions');
+    setCurrentQuestion(0);
+    setAnswers({});
+    setPersona(null);
+  };
+
+  const q = questions[currentQuestion];
+  const isMulti = q?.type === 'multi';
+  const currentMultiAnswers = (answers[q?.id] as string[]) || [];
+
+  // ==================== رندر پرسشنامه ====================
+  if (step === 'questions' && q) {
+    return (
+      <main className="min-h-screen bg-background pt-24 pb-16 flex items-center justify-center">
+        <Container>
+          <div className="max-w-2xl mx-auto">
+            {/* Progress */}
+            <div className="mb-8 text-center">
+              <div className="flex justify-between text-sm text-text-tertiary mb-2">
+                <span>سوال {currentQuestion + 1} از {questions.length}</span>
+                <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
+              </div>
+              <div className="w-full h-1 bg-border rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-500"
+                  style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Question */}
+            <motion.div
+              key={q.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-[8px_8px_16px_rgba(0,0,0,0.3),-4px_-4px_8px_rgba(255,255,255,0.02)]"
+            >
+              <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-6">{q.text}</h2>
+
+              {/* Single Choice */}
+              {q.type === 'single' && q.options && (
+                <div className="space-y-3">
+                  {q.options.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => handleSingleChoice(opt)}
+                      className="w-full text-right px-4 py-3 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all"
+                    >
+                      {opt}
+                    </button>
+                  ))}
                 </div>
-                <p className="text-text-secondary text-sm">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+              )}
 
-        {/* بخش ۳ - پرسونا */}
-        <section className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">پرسونای مشتری</h2>
+              {/* Multi Choice */}
+              {q.type === 'multi' && q.options && (
+                <div className="space-y-3">
+                  {q.options.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => handleSingleChoice(opt)}
+                      className={`w-full text-right px-4 py-3 rounded-xl border transition-all ${
+                        currentMultiAnswers.includes(opt)
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border hover:border-primary/50 hover:bg-primary/5'
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                  {currentMultiAnswers.length > 0 && (
+                    <button
+                      onClick={() => handleAnswer(currentMultiAnswers)}
+                      className="w-full mt-4 px-4 py-3 rounded-xl bg-primary text-background font-medium hover:bg-primary/90 transition-all"
+                    >
+                      تأیید و ادامه
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Text */}
+              {q.type === 'text' && (
+                <form onSubmit={handleTextSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="پاسخ خود را بنویسید..."
+                    className="w-full px-4 py-3 rounded-xl bg-background border border-border text-text-primary focus:outline-none focus:border-primary transition-all"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="px-6 py-2 rounded-xl bg-primary text-background font-medium hover:bg-primary/90 transition-all"
+                  >
+                    تأیید
+                  </button>
+                </form>
+              )}
+
+              {/* Range */}
+              {q.type === 'range' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm text-text-tertiary">
+                    <span>۱ (کم)</span>
+                    <span>۵ (زیاد)</span>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <button
+                        key={num}
+                        onClick={() => handleRangeSubmit(num)}
+                        className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-all text-lg font-medium"
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </Container>
+      </main>
+    );
+  }
+
+  // ==================== رندر نتیجه ====================
+  if (step === 'result' && persona) {
+    return (
+      <main className="min-h-screen bg-background pt-24 pb-16">
+        <Container>
+          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
+              🎯 پرسونای مشتری کشت‌یار
+            </h1>
+            <p className="text-text-tertiary">بر اساس پاسخ‌های شما</p>
+          </motion.div>
+
+          {/* Persona Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
             className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-[12px_12px_24px_rgba(0,0,0,0.4),-6px_-6px_12px_rgba(255,255,255,0.02)] max-w-4xl mx-auto"
           >
             <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-              {/* آواتار */}
-              <div className="flex-shrink-0">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-primary/10 flex items-center justify-center text-4xl md:text-5xl text-primary mx-auto md:mx-0 shadow-[inset_0_2px_4px_rgba(255,255,255,0.05),4px_4px_8px_rgba(0,0,0,0.3)]">
+              <div className="flex-shrink-0 text-center">
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-primary/10 flex items-center justify-center text-5xl md:text-6xl text-primary mx-auto shadow-[inset_0_2px_4px_rgba(255,255,255,0.05),4px_4px_8px_rgba(0,0,0,0.3)]">
                   👨‍🌾
                 </div>
               </div>
 
-              {/* اطلاعات */}
               <div className="flex-1 space-y-4 text-right">
                 <div>
                   <h3 className="text-2xl md:text-3xl font-bold text-text-primary">{persona.name}</h3>
                   <p className="text-text-tertiary text-sm">
-                    {persona.age} · {persona.job} · {persona.location}
+                    {persona.age} · {persona.job} · {persona.activity}
                   </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-text-tertiary">سطح فناوری:</span>
+                    <span className={`mr-2 font-medium ${
+                      persona.techLevel === 'بالا' ? 'text-green-400' :
+                      persona.techLevel === 'متوسط' ? 'text-yellow-400' : 'text-red-400'
+                    }`}>
+                      {persona.techLevel}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-text-tertiary">پذیرش فناوری:</span>
+                    <span className={`mr-2 font-medium ${
+                      persona.techAdoption === 'بالا' ? 'text-green-400' :
+                      persona.techAdoption === 'متوسط' ? 'text-yellow-400' : 'text-red-400'
+                    }`}>
+                      {persona.techAdoption}
+                    </span>
+                  </div>
                 </div>
 
                 <div>
                   <p className="text-text-secondary text-sm">
-                    <span className="font-semibold text-text-primary">دارایی: </span>
-                    {persona.property}
+                    <span className="font-semibold text-text-primary">رفتار کاری: </span>
+                    {persona.workBehavior}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   <div>
                     <h4 className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">اهداف</h4>
                     <ul className="space-y-1">
@@ -139,37 +497,93 @@ export default function PersonaPage() {
                       ))}
                     </ul>
                   </div>
+
+                  <div>
+                    <h4 className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2">انگیزه‌ها</h4>
+                    <ul className="space-y-1">
+                      {persona.motivations.map((motivation, i) => (
+                        <li key={i} className="text-sm text-text-secondary flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400/50 flex-shrink-0"></span>
+                          {motivation}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mt-4">
+                  <p className="text-sm text-text-secondary italic text-center">
+                    &quot;{persona.quote}&quot;
+                  </p>
                 </div>
               </div>
             </div>
           </motion.div>
-        </section>
 
-        {/* بخش ۴ - نتایج */}
-        <section className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">نتایج تحلیل</h2>
-          <p className="text-text-secondary text-base md:text-lg leading-relaxed max-w-3xl mx-auto text-center">
-            بیشتر پاسخ‌دهندگان علاقه‌مند به استفاده از فناوری برای مدیریت بهتر باغ و باغچه هستند.
-            مهم‌ترین نیازهای شناسایی شده شامل پایش از راه دور، مدیریت مصرف آب و دریافت هشدارهای هوشمند است.
-          </p>
-        </section>
-
-        {/* بخش ۵ - ارتباط با کشت‌یار */}
-        <section>
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">ارتباط با کشت‌یار</h2>
+          {/* جمع‌بندی */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-primary/5 border border-primary/20 rounded-2xl p-8 md:p-12 text-center max-w-3xl mx-auto shadow-[inset_0_1px_0_rgba(156,176,128,0.1)]"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-4xl mx-auto mt-8"
           >
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed">
-              کشت‌یار با فراهم کردن امکانات پایش، تحلیل، کنترل و هوشمندسازی
-              می‌تواند بسیاری از نیازهای کاربران شناسایی‌شده در این پژوهش را پوشش دهد.
-            </p>
+            <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-[8px_8px_16px_rgba(0,0,0,0.3),-4px_-4px_8px_rgba(255,255,255,0.02)]">
+              <h2 className="text-2xl font-bold text-text-primary text-center mb-4">
+                📊 جمع‌بندی و پیشنهاد برای توسعه کشت‌یار
+              </h2>
+              <div className="space-y-4 text-text-secondary text-base leading-relaxed">
+                <p>
+                  بر اساس تحلیل پاسخ‌ها، این مشتری به عنوان <span className="text-text-primary font-medium">{persona.name}</span> 
+                  {' '}با سن {persona.age} و شغل {persona.job} شناسایی شد.
+                  {' '}فعالیت اصلی ایشان در حوزه <span className="text-text-primary">{persona.activity}</span> است.
+                </p>
+                
+                <p>
+                  <span className="text-text-primary font-medium">سطح آشنایی با فناوری:</span> {persona.techLevel} 
+                  {' '}و <span className="text-text-primary font-medium">میزان پذیرش فناوری:</span> {persona.techAdoption} است.
+                </p>
+
+                <div>
+                  <p className="text-text-primary font-medium mb-2">نیازهای کلیدی که کشت‌یار باید پوشش دهد:</p>
+                  <ul className="list-disc list-inside space-y-1 mr-4">
+                    {persona.needs.map((need, i) => (
+                      <li key={i}>{need}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="text-text-primary font-medium mb-2">پیشنهادات برای توسعه:</p>
+                  <ul className="list-disc list-inside space-y-1 mr-4">
+                    <li>تمرکز بر <span className="text-text-primary">پایش لحظه‌ای</span> و <span className="text-text-primary">کنترل از راه دور</span></li>
+                    <li>توسعه <span className="text-text-primary">هشدارهای هوشمند</span> برای کاهش نیاز به حضور فیزیکی</li>
+                    <li>ارائه <span className="text-text-primary">داشبورد ساده و کاربرپسند</span> برای مشاهده سریع داده‌ها</li>
+                    <li>قابلیت <span className="text-text-primary">مدیریت مصرف آب</span> و <span className="text-text-primary">آبیاری هوشمند</span></li>
+                    <li>ارائه <span className="text-text-primary">پشتیبانی و آموزش</span> برای کاربران با سطح فناوری پایین‌تر</li>
+                  </ul>
+                </div>
+
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mt-4 text-center">
+                  <p className="text-sm text-text-secondary">
+                    🚀 کشت‌یار می‌تواند با ارائه این امکانات، نیازهای این مشتری و مشتریان مشابه را به خوبی پوشش دهد.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center mt-8">
+              <button
+                onClick={resetQuiz}
+                className="px-6 py-3 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all text-text-secondary hover:text-text-primary"
+              >
+                🔄 شروع مجدد پرسشنامه
+              </button>
+            </div>
           </motion.div>
-        </section>
-      </Container>
-    </main>
-  );
+        </Container>
+      </main>
+    );
+  }
+
+  return null;
 }
