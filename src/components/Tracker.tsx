@@ -1,14 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function Tracker() {
+  const [deviceInfo, setDeviceInfo] = useState<any>(null);
+
   useEffect(() => {
-    const trackVisit = async () => {
+    const getDeviceInfo = async () => {
       try {
+        // اطلاعات از سرور
         const res = await fetch('/api/track');
         const serverData = await res.json();
 
+        // اطلاعات دقیق‌تر از خود دستگاه
         const clientData = {
           screenWidth: window.screen.width,
           screenHeight: window.screen.height,
@@ -22,17 +26,23 @@ export function Tracker() {
           page: window.location.pathname,
           fcp: 0,
           lcp: 0,
+          // اطلاعات اضافی
+          devicePixelRatio: window.devicePixelRatio,
+          touchPoints: (navigator as any).maxTouchPoints,
+          vendor: (navigator as any).vendor || '',
+          product: (navigator as any).product || '',
+          userAgentData: (navigator as any).userAgentData || null,
         };
 
-        if (typeof performance !== 'undefined') {
-          const entries = performance.getEntriesByType('paint');
-          const fcpEntry = entries.find(e => e.name === 'first-contentful-paint');
-          if (fcpEntry) clientData.fcp = fcpEntry.startTime;
-          
-          const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
-          if (lcpEntries.length > 0) clientData.lcp = lcpEntries[0].startTime;
+        // اگر User-Agent Data وجود داره (مرورگرهای جدید)
+        if ((navigator as any).userAgentData) {
+          const uaData = await (navigator as any).userAgentData.getHighEntropyValues([
+            'architecture', 'bitness', 'fullVersionList', 'model', 'platformVersion'
+          ]);
+          clientData.userAgentData = uaData;
         }
 
+        // ارسال به API
         await fetch('/api/visitor', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -50,10 +60,10 @@ export function Tracker() {
 
     if (typeof window !== 'undefined') {
       if (document.readyState === 'complete') {
-        trackVisit();
+        getDeviceInfo();
       } else {
-        window.addEventListener('load', trackVisit);
-        return () => window.removeEventListener('load', trackVisit);
+        window.addEventListener('load', getDeviceInfo);
+        return () => window.removeEventListener('load', getDeviceInfo);
       }
     }
   }, []);
