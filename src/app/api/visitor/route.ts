@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const supabase = createClient();
     const body = await request.json();
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('visitors')
       .insert({
         ip: body.ip,
