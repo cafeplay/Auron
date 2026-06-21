@@ -8,6 +8,7 @@ import Link from 'next/link';
 export default function AdminPersonaPage() {
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [error, setError] = useState(false);
   const [responses, setResponses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -42,17 +43,36 @@ export default function AdminPersonaPage() {
               type="password"
               placeholder="رمز عبور را وارد کنید"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(false);
+              }}
               className="w-full px-4 py-3 rounded-xl bg-background border border-border text-text-primary focus:outline-none focus:border-primary transition-all mb-4"
-              onKeyDown={(e) => e.key === 'Enter' && setIsAuthorized(password === ADMIN_PASSWORD)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (password === ADMIN_PASSWORD) {
+                    setIsAuthorized(true);
+                    setError(false);
+                  } else {
+                    setError(true);
+                  }
+                }
+              }}
             />
             <button
-              onClick={() => setIsAuthorized(password === ADMIN_PASSWORD)}
+              onClick={() => {
+                if (password === ADMIN_PASSWORD) {
+                  setIsAuthorized(true);
+                  setError(false);
+                } else {
+                  setError(true);
+                }
+              }}
               className="w-full px-6 py-3 rounded-xl bg-primary text-background font-medium hover:bg-primary/90 transition-all"
             >
               ورود
             </button>
-            {password && password !== ADMIN_PASSWORD && (
+            {error && (
               <p className="text-red-400 text-sm text-center mt-3">رمز عبور اشتباه است</p>
             )}
             <div className="text-center mt-4">
