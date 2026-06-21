@@ -1,13 +1,13 @@
 export interface ProductFeature {
   title: string;
   description: string;
-  icon: string; // نام آیکون Lucide
+  icon: string;
 }
 
 export interface ProductApplication {
   title: string;
   description: string;
-  icon: string; // نام آیکون Lucide
+  icon: string;
 }
 
 export interface ProductFAQ {
