@@ -3,7 +3,9 @@ import { Container } from '@/components/Container';
 import { ProductHero } from '@/components/products/ProductHero';
 import { ProductIntro } from '@/components/products/ProductIntro';
 import { ProductFeatures } from '@/components/products/ProductFeatures';
-import { ProductWhy } from '@/components/products/ProductWhy';
+import { ProductApplications } from '@/components/products/ProductApplications';
+import { ProductDashboard } from '@/components/products/ProductDashboard';
+import { ProductFAQ } from '@/components/products/ProductFAQ';
 import { ProductSummary } from '@/components/products/ProductSummary';
 import { keshtyarConfig } from '@/config/products/keshtyar';
 
@@ -31,7 +33,9 @@ export default function KeshtyarPage() {
       <ProductHero config={keshtyarConfig} />
       <ProductIntro config={keshtyarConfig} />
       <ProductFeatures config={keshtyarConfig} />
-      <ProductWhy config={keshtyarConfig} />
+      <ProductApplications config={keshtyarConfig} />
+      <ProductDashboard config={keshtyarConfig} />
+      <ProductFAQ config={keshtyarConfig} />
       <ProductSummary config={keshtyarConfig} />
     </main>
   );
