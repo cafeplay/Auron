@@ -36,12 +36,19 @@ export function Hero() {
             {content.hero.subtitle}
           </motion.p>
 
-          <motion.div variants={fadeInUp} className="mt-12">
+          <motion.div variants={fadeInUp} className="mt-12 flex gap-4 justify-center">
             <a
               href="#products"
               className="neumorphic-button inline-block px-8 py-4 text-lg font-medium text-text-primary hover:text-primary transition-colors duration-300"
             >
-              {content.hero.cta}
+              {content.hero.ctaPrimary}
+            </a>
+
+            <a
+              href="#philosophy"
+              className="inline-block px-8 py-4 text-lg font-medium text-text-secondary hover:text-text-primary transition-colors duration-300"
+            >
+              {content.hero.ctaSecondary}
             </a>
           </motion.div>
         </motion.div>
