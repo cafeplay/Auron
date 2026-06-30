@@ -7,7 +7,7 @@ export const keshtyarConfig: ProductConfig = {
   description:
     'از راه دور وضعیت مزرعه را ببینید، تجهیزات را کنترل کنید و با داده‌های لحظه‌ای تصمیم‌های بهتری بگیرید. کشت‌یار، مدیریت مزرعه را ساده‌تر از همیشه می‌کند.',
   heroCTA: [
-    { text: 'ورود به سامانه', href: 'https://keshtyar.pythonanywhere.com/login', variant: 'primary' },
+    { text: 'ورود به سامانه', href: 'https://keshtyar.auron.ir', variant: 'primary' },
     { text: 'مشاهده دمو', href: '#dashboard', variant: 'outline' },
   ],
   intro: {
